@@ -28,7 +28,7 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios
 });
 
 // Cadastra o usuário
-app.post('/cadastro_usuario', (req, res, next) => {
+app.post('/Usuario/cadastrar', (req, res, next) => {
     db.run(`INSERT INTO usuarios(nome, telefone, cpf) VALUES (?,?,?)`,
         [res.body.nome, req.body.telefone, req.body.cpf], (err) => {
             if (err) {
@@ -42,7 +42,7 @@ app.post('/cadastro_usuario', (req, res, next) => {
 });
 
 // Consulta todos os dados da tabela
-app.get('/consulta_usuario', (req, res, next) => {
+app.get('/Usuario/consultar', (req, res, next) => {
     db.all(`SELECT * FROM usuarios`, [], (err, result) => {
         if (err) {
             console.log('Erro: ', err);
@@ -54,7 +54,7 @@ app.get('/consulta_usuario', (req, res, next) => {
 });
 
 // Consulta um usuário específico através do CPF
-app.get('/consulta_usuario/:cpf', (req, res, next) => {
+app.get('/Usuario/consultar/:cpf', (req, res, next) => {
     db.get(`SELECT * FROM usuarios WHERE cpf = ?`,
         req.params.cpf, (err, result) => {
             if (err) {
@@ -70,7 +70,7 @@ app.get('/consulta_usuario/:cpf', (req, res, next) => {
 });
 
 // Altera cadastro do usuário
-app.patch('/altera_usuario/:cpf', (req, res, next) => {
+app.patch('/Usuario/alterar/:cpf', (req, res, next) => {
     db.run(`UPDATE usuarios SET nome = COALESCE(?, nome), telefone = COALESCE(?, telefone) WHERE cpf = ?`,
         [req.body.nome, req.body.telefone, req.params.cpf], function(err) {
             if (err) {
@@ -85,7 +85,7 @@ app.patch('/altera_usuario/:cpf', (req, res, next) => {
 });
 
 // Exclui o usuário
-app.delete('/exclui_usuario/:cpf', (req, res, next) => {
+app.delete('/Usuario/excluir/:cpf', (req, res, next) => {
     db.run(`DELETE FROM usuarios WHERE cpf = ?`, req.params.cpf, function(err) {
         if (err) {
             res.status(500).send('Erro ao excluir usuário');

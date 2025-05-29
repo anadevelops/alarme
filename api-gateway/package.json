@@ -1,7 +1,6 @@
 {
-  "name": "usuario-service",
+  "name": "api-gateway",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,9 +8,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
+  "description": "",
   "dependencies": {
-    "body-parser": "^2.2.0",
     "express": "^5.1.0",
-    "sqlite3": "^5.1.7"
+    "express-http-proxy": "^2.1.1",
+    "morgan": "^1.10.0"
   }
 }

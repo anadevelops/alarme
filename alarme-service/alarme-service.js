@@ -30,22 +30,22 @@ db.run(`CREATE TABLE IF NOT EXISTS alarmes
 });
 
 // Cadastra o alarme
-app.post('/cadastro_alarme', (req, res, next) => {
-    db.run(`INSERT INTO alarmes(id, local, cpf) VALUES (?,?,?)`,
-        [res.body.nome, req.body.telefone, req.body.cpf], (err) => {
+app.post('/Alarme/cadastrar', (req, res, next) => {
+    db.run(`INSERT INTO alarmes(id, local, usuarios, monitora) VALUES (?,?,?,?)`,
+        [res.body.id, req.body.local, req.body.usuarios, req.body.monitora], (err) => {
             if (err) {
                 console.log('Erro: ', err);
-                res.status(500).send('Erro ao cadastrar usuário');
+                res.status(500).send('Erro ao cadastrar alarme');
             } else {
-                console.log('Usuário cadastrado com sucesso!');
-                res.status(200).send('Cliente cadastrado com sucesso!');
+                console.log('Alarme cadastrado com sucesso!');
+                res.status(200).send('Alarme cadastrado com sucesso!');
             }
         });
 });
 
 // Consulta todos os dados da tabela
-app.get('/consulta_usuario', (req, res, next) => {
-    db.all(`SELECT * FROM usuarios`, [], (err, result) => {
+app.get('/Alarme/consultar', (req, res, next) => {
+    db.all(`SELECT * FROM alarmes`, [], (err, result) => {
         if (err) {
             console.log('Erro: ', err);
             res.status(500).send('Erro ao obter dados');
@@ -55,52 +55,52 @@ app.get('/consulta_usuario', (req, res, next) => {
     });
 });
 
-// Consulta um usuário específico através do CPF
-app.get('/consulta_usuario/:cpf', (req, res, next) => {
-    db.get(`SELECT * FROM usuarios WHERE cpf = ?`,
-        req.params.cpf, (err, result) => {
+// Consulta um alarme específico através do ID
+app.get('/Alarme/consultar/:id', (req, res, next) => {
+    db.get(`SELECT * FROM alarmes WHERE id = ?`,
+        req.params.id, (err, result) => {
             if (err) {
                 console.log('Erro: ', err);
                 res.status(500).send('Erro ao obter dados.');
             } else if (result == null) {
-                console.log('Usuário não encontrado');
-                res.status(404).send('Usuário não encontrado');
+                console.log('Alarme não encontrado');
+                res.status(404).send('Alarme não encontrado');
             } else {
                 res.status(200).json(result);
             }
         });
 });
 
-// Altera cadastro do usuário
-app.patch('/altera_usuario/:cpf', (req, res, next) => {
-    db.run(`UPDATE usuarios SET nome = COALESCE(?, nome), telefone = COALESCE(?, telefone) WHERE cpf = ?`,
-        [req.body.nome, req.body.telefone, req.params.cpf], function(err) {
+// Altera cadastro do alarme
+app.patch('/Alarme/alterar/:id', (req, res, next) => {
+    db.run(`UPDATE alarmes SET local = COALESCE(?, local), usuarios = COALESCE(?, usuarios), monitora = COALESCE(?, usuarios) WHERE id = ?`,
+        [req.body.local, req.body.usuarios, req.body.monitora, req.params.id], function(err) {
             if (err) {
                 res.status(500).send('Erro ao alterar dados');
             } else if (this.changes == 0) {
-                console.log('Usuário não encontrado');
-                res.status(404).send('Usuário não encontrado');
+                console.log('Alarme não encontrado');
+                res.status(404).send('Alarme não encontrado');
             } else {
-                res.status(200).send('Usuário alterado com sucesso!');
+                res.status(200).send('Alarme alterado com sucesso!');
             }
         });
 });
 
-// Exclui o usuário
-app.delete('/exclui_usuario/:cpf', (req, res, next) => {
-    db.run(`DELETE FROM usuarios WHERE cpf = ?`, req.params.cpf, function(err) {
+// Exclui o alarme
+app.delete('/Alarme/excluir/:id', (req, res, next) => {
+    db.run(`DELETE FROM alarmes WHERE id = ?`, req.params.id, function(err) {
         if (err) {
-            res.status(500).send('Erro ao excluir usuário');
+            res.status(500).send('Erro ao excluir alarme');
         } else if (this.changes == 0) {
-            console.log('Usuário não encontrado.');
-            res.status(404).send('Usuário não encontrado.');
+            console.log('Alarme não encontrado.');
+            res.status(404).send('Alarme não encontrado.');
         } else {
-            res.status(200).send('Usuário excluído com sucesso!');
+            res.status(200).send('Alarme excluído com sucesso!');
         }
     });
 });
 
-let porta = 8080;
+let porta = 8090;
 app.listen(porta, () => {
  console.log('Servidor em execução na porta: ' + porta);
 });
