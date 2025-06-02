@@ -19,9 +19,8 @@ var db = new sqlite3.Database('./alarmes.db', (err) => {
 db.run(`CREATE TABLE IF NOT EXISTS alarmes
         (id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
          local TEXT NOT NULL,
-         usuarios INTEGER NOT NULL, 
-         monitora TEXT NOT NULL,
-         FOREIGN KEY (usuarios) REFERENCES usuarios(cpf)`,
+         usuarios TEXT NOT NULL, 
+         monitora TEXT NOT NULL)`,
          [], (err) => {
             if (err) {
                 console.log('ERRO: Não foi possível criar a tabela');
@@ -30,9 +29,9 @@ db.run(`CREATE TABLE IF NOT EXISTS alarmes
 });
 
 // Cadastra o alarme
-app.post('/Alarme/cadastrar', (req, res, next) => {
+app.post('/alarme/cadastrar', (req, res, next) => {
     db.run(`INSERT INTO alarmes(id, local, usuarios, monitora) VALUES (?,?,?,?)`,
-        [res.body.id, req.body.local, req.body.usuarios, req.body.monitora], (err) => {
+        [req.body.id, req.body.local, req.body.usuarios, req.body.monitora], (err) => {
             if (err) {
                 console.log('Erro: ', err);
                 res.status(500).send('Erro ao cadastrar alarme');
@@ -44,7 +43,7 @@ app.post('/Alarme/cadastrar', (req, res, next) => {
 });
 
 // Consulta todos os dados da tabela
-app.get('/Alarme/consultar', (req, res, next) => {
+app.get('/alarme/consultar', (req, res, next) => {
     db.all(`SELECT * FROM alarmes`, [], (err, result) => {
         if (err) {
             console.log('Erro: ', err);
@@ -56,7 +55,7 @@ app.get('/Alarme/consultar', (req, res, next) => {
 });
 
 // Consulta um alarme específico através do ID
-app.get('/Alarme/consultar/:id', (req, res, next) => {
+app.get('/alarme/consultar/:id', (req, res, next) => {
     db.get(`SELECT * FROM alarmes WHERE id = ?`,
         req.params.id, (err, result) => {
             if (err) {
@@ -72,7 +71,7 @@ app.get('/Alarme/consultar/:id', (req, res, next) => {
 });
 
 // Altera cadastro do alarme
-app.patch('/Alarme/alterar/:id', (req, res, next) => {
+app.patch('/alarme/alterar/:id', (req, res, next) => {
     db.run(`UPDATE alarmes SET local = COALESCE(?, local), usuarios = COALESCE(?, usuarios), monitora = COALESCE(?, usuarios) WHERE id = ?`,
         [req.body.local, req.body.usuarios, req.body.monitora, req.params.id], function(err) {
             if (err) {
@@ -87,7 +86,7 @@ app.patch('/Alarme/alterar/:id', (req, res, next) => {
 });
 
 // Exclui o alarme
-app.delete('/Alarme/excluir/:id', (req, res, next) => {
+app.delete('/alarme/excluir/:id', (req, res, next) => {
     db.run(`DELETE FROM alarmes WHERE id = ?`, req.params.id, function(err) {
         if (err) {
             res.status(500).send('Erro ao excluir alarme');

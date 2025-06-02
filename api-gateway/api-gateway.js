@@ -6,10 +6,12 @@ var logger = require('morgan');
 app.use(logger('dev'));
 
 function selectProxyHost(req) {
-    if (req.path.startsWith('/Usuario'))
+    if (req.path.startsWith('/usuario'))
         return 'http://localhost:8080/';
-    else if (req.path.startsWith('/Alarme'))
+    else if (req.path.startsWith('/alarme'))
         return 'http://localhost:8090/';
+    else if (req.path.startsWith('/logging'))
+        return 'http://localhost:8070/';
     else return null;
 }
 
