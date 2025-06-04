@@ -16,24 +16,28 @@ function log(evento, status, descricao) {
     });
 };
 
-async function getAlarmeLocal(id) {
+async function getAlarme(id) {
     const response = await fetch(`http://localhost:8090/alarme/consultar/${id}`);
     const data = await response.json();
-    return data.local;
+    return data;
 };
 
 // Aciona o alarme
 app.post('/aciona/liga/:id', async (req, res, next) => {
-    const localAlarme = await getAlarmeLocal(req.params.id);
-    log('Acionamento', 'OK', `${localAlarme} ligado com sucesso`);
-    console.log(`${localAlarme} ligado com sucesso`);
+    const dadosAlarme = await getAlarme(req.params.id);
+    if (req.body.cpf in dadosAlarme.usuario)
+        log('Acionamento', 'OK', `${dadosAlarme.local} ligado com sucesso`);
+        console.log(`${dadosAlarme.local} ligado com sucesso`);
+    console.log('Usuário não possui permissão para manipular esse alarme!');
 });
 
 // Desliga o alarme o alarme
 app.post('/aciona/desliga/:id', async (req, res, next) => {
-    const localAlarme = await getAlarmeLocal(req.params.id);
-    log('Acionamento', 'OK', `${localAlarme} desligado com sucesso`);
-    console.log(`${localAlarme} desligado com sucesso`);
+    const dadosAlarme = await getAlarme(req.params.id);
+    if (req.bpdy.cpf in dadosAlarme.usuario)
+        log('Acionamento', 'OK', `${dadosAlarme.local} desligado com sucesso`);
+        console.log(`${dadosAlarme.local} desligado com sucesso`);
+    console.log('Usuário não possui permissão para manipular esse alarme!');
 });
 
 let porta = 8060;
