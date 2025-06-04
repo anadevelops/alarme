@@ -22,21 +22,14 @@ async function getAlarmeLocal(id) {
     return data.local;
 };
 
-// Aciona o alarme
-app.post('/aciona/liga/:id', async (req, res, next) => {
+// Dispara o alarme
+app.post('/dispara/liga/:id', async (req, res, next) => {
     const localAlarme = await getAlarmeLocal(req.params.id);
-    log('Acionamento', 'OK', `${localAlarme} ligado com sucesso`);
-    console.log(`${localAlarme} ligado com sucesso`);
+    log('Acionamento', 'OK', `${localAlarme} disparado!!`);
+    console.log(`${localAlarme} disparado!!`)
 });
 
-// Desliga o alarme o alarme
-app.post('/aciona/desliga/:id', async (req, res, next) => {
-    const localAlarme = await getAlarmeLocal(req.params.id);
-    log('Acionamento', 'OK', `${localAlarme} desligado com sucesso`);
-    console.log(`${localAlarme} desligado com sucesso`);
-});
-
-let porta = 8060;
+let porta = 8050;
 app.listen(porta, () => {
  console.log('Servidor em execução na porta: ' + porta);
 });
