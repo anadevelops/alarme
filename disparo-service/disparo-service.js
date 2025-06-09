@@ -6,6 +6,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+console.clear()
+
 function log(evento, status, descricao) {
     fetch('http://localhost:8070/logging', {
         method: 'POST',
@@ -23,7 +25,7 @@ async function getAlarmeLocal(id) {
 };
 
 // Dispara o alarme
-app.post('/dispara/liga/:id', async (req, res, next) => {
+app.post('/dispara/:id', async (req, res, next) => {
     const localAlarme = await getAlarmeLocal(req.params.id);
     log('Acionamento', 'OK', `${localAlarme} disparado!!`);
     console.log(`${localAlarme} disparado!!`)

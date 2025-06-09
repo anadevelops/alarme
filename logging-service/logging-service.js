@@ -7,6 +7,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+console.clear()
+
 var db = new sqlite3.Database('./logging.db', (err) => {
     if (err) {
         console.log('ERRO: não foi possível conectar ao SQLite.');
@@ -29,9 +31,9 @@ db.run(`CREATE TABLE IF NOT EXISTS logging (
 });
 
 // Cadastra o log
-app.post('/logging/cadastrar', (req, res, next) => {
-    db.run(`INSERT INTO logging (evento, status, descricao, horario) VALUES (?,?,?)`,
-        [req.body.evento, req.body.status, req.body.descricao, req.body.horario], (err) => {
+app.post('/logging/', (req, res, next) => {
+    db.run(`INSERT INTO logging (evento, status, descricao, horario) VALUES (?,?,?,?)`,
+        [req.body.evento, req.body.status, req.body.descricao, new Date().toString()], (err) => {
             if (err) {
                 console.log('Erro: ', err);
                 res.status(500).send('Erro ao cadastrar log');
@@ -43,7 +45,7 @@ app.post('/logging/cadastrar', (req, res, next) => {
 });
 
 // Consulta todos os dados da tabela
-app.get('/logging/consultar', (req, res, next) => {
+app.get('/logging/', (req, res, next) => {
     db.all(`SELECT * FROM logging`, [], (err, result) => {
         if (err) {
             console.log('Erro: ', err);

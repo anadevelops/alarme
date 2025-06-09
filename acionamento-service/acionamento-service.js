@@ -1,20 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const log = require("../logging-service/log")
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
-function log(evento, status, descricao) {
-    fetch('http://localhost:8070/logging', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            evento, status, descricao, horario: new Date().toString()
-        })
-    });
-};
 
 async function getAlarme(id) {
     const response = await fetch(`http://localhost:8090/alarme/consultar/${id}`);

@@ -7,6 +7,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+console.clear()
+
 var db = new sqlite3.Database('./alarmes.db', (err) => {
     if (err) {
         console.log('ERRO: não foi possível conectar ao SQLite.');
@@ -29,7 +31,7 @@ db.run(`CREATE TABLE IF NOT EXISTS alarmes
 });
 
 // Cadastra o alarme
-app.post('/alarme/cadastrar', (req, res, next) => {
+app.post('/alarme/', (req, res, next) => {
     db.run(`INSERT INTO alarmes(id, local, usuarios, monitora) VALUES (?,?,?,?)`,
         [req.body.id, req.body.local, req.body.usuarios, req.body.monitora], (err) => {
             if (err) {
@@ -43,7 +45,7 @@ app.post('/alarme/cadastrar', (req, res, next) => {
 });
 
 // Consulta todos os dados da tabela
-app.get('/alarme/consultar', (req, res, next) => {
+app.get('/alarme/', (req, res, next) => {
     db.all(`SELECT * FROM alarmes`, [], (err, result) => {
         if (err) {
             console.log('Erro: ', err);
@@ -55,7 +57,7 @@ app.get('/alarme/consultar', (req, res, next) => {
 });
 
 // Consulta um alarme específico através do ID
-app.get('/alarme/consultar/:id', (req, res, next) => {
+app.get('/alarme/:id', (req, res, next) => {
     db.get(`SELECT * FROM alarmes WHERE id = ?`,
         req.params.id, (err, result) => {
             if (err) {
@@ -71,7 +73,7 @@ app.get('/alarme/consultar/:id', (req, res, next) => {
 });
 
 // Altera cadastro do alarme
-app.patch('/alarme/alterar/:id', (req, res, next) => {
+app.patch('/alarme/:id', (req, res, next) => {
     db.run(`UPDATE alarmes SET local = COALESCE(?, local), usuarios = COALESCE(?, usuarios), monitora = COALESCE(?, usuarios) WHERE id = ?`,
         [req.body.local, req.body.usuarios, req.body.monitora, req.params.id], function(err) {
             if (err) {
@@ -86,7 +88,7 @@ app.patch('/alarme/alterar/:id', (req, res, next) => {
 });
 
 // Exclui o alarme
-app.delete('/alarme/excluir/:id', (req, res, next) => {
+app.delete('/alarme/:id', (req, res, next) => {
     db.run(`DELETE FROM alarmes WHERE id = ?`, req.params.id, function(err) {
         if (err) {
             res.status(500).send('Erro ao excluir alarme');
