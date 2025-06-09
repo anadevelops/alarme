@@ -1,5 +1,27 @@
 @gateway = http://localhost:8000
 
+//--------------------------------------------------------
+// Acionamento Service (8060)
+//--------------------------------------------------------
+@acionamento-service = http://localhost:8060
+
+# Ligar Alarme
+POST {{acionamento-service}}/aciona/liga/0
+Content-Type: application/json
+
+{
+    "cpf": "136"
+}
+###
+
+# Desligar Alarme
+POST {{acionamento-service}}/aciona/desliga/0
+Content-Type: application/json
+
+{
+    "cpf": "136"
+}
+###
 
 //--------------------------------------------------------
 // Alarme Service (8090)
@@ -22,9 +44,9 @@ POST {{alarme-service}}/alarme
 Content-Type: application/json
 
 {
-    "local": "Florianópolis",
-    "usuarios": "Lucas",
-    "monitora": "",
+    "local": "CTC",
+    "usuarios": "136, 456",
+    "monitora": "Porta",
     "id": {{id-alarme}}
 }
 ###
@@ -34,9 +56,9 @@ PATCH {{alarme-service}}/alarme/{{id-alarme}}
 Content-Type: application/json
 
 {
-    "local": "Florianópolis",
-    "usuarios": "Lucas",
-    "monitora": ""
+    "local": "CTC Térreo",
+    "usuarios": "136, 438",
+    "monitora": "Porta"
 }
 ###
 
@@ -52,7 +74,7 @@ Content-Type: application/json
 @disparo-service = http://localhost:8050
 
 # Disparar Alarme
-POST {{disparo-service}}/dispara/{{id-alarme}}
+POST {{disparo-service}}/dispara/10
 Content-Type: application/json
 ###
 

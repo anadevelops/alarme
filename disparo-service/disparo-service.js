@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const log = require("../logging-service/log")
 
 const app = express();
 
@@ -8,18 +9,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 console.clear()
 
-function log(evento, status, descricao) {
-    fetch('http://localhost:8070/logging', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            evento, status, descricao, horario: new Date().toString()
-        })
-    });
-};
-
 async function getAlarmeLocal(id) {
-    const response = await fetch(`http://localhost:8090/alarme/consultar/${id}`);
+    const response = await fetch(`http://localhost:8090/alarme/${id}`);
     const data = await response.json();
     return data.local;
 };
@@ -27,7 +18,7 @@ async function getAlarmeLocal(id) {
 // Dispara o alarme
 app.post('/dispara/:id', async (req, res, next) => {
     const localAlarme = await getAlarmeLocal(req.params.id);
-    log('Acionamento', 'OK', `${localAlarme} disparado!!`);
+    log('Disparo', 'OK', `${localAlarme} disparado!!`);
     console.log(`${localAlarme} disparado!!`)
 });
 
