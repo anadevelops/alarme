@@ -9,15 +9,23 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 console.clear()
 
-async function getAlarmeLocal(id) {
-    const response = await fetch(`http://localhost:8090/alarme/${id}`);
-    const data = await response.json();
-    return data.local;
+async function getAlarme(id) {
+    try {
+        const response = await fetch(`http://localhost:8090/alarme/${id}`);
+        const data = await response.json();
+        return data;
+    } catch {
+        return false;
+    }
 };
 
 // Dispara o alarme
 app.post('/dispara/:id', async (req, res, next) => {
     const localAlarme = await getAlarmeLocal(req.params.id);
+    if (!dadosAlarme) {
+        res.status(500).send('ID de alarme inválido');
+    };
+
     log('Disparo', 'OK', `${localAlarme} disparado!!`);
     console.log(`${localAlarme} disparado!!`)
 });

@@ -27,7 +27,7 @@ Content-Type: application/json
 // Alarme Service (8090)
 //--------------------------------------------------------
 @alarme-service = http://localhost:8090
-@id-alarme = 0
+@id-alarme = 1
 
 # Consultar Alarmes
 GET {{alarme-service}}/alarme
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 {
     "local": "CTC",
-    "usuarios": "136, 456",
+    "usuarios": ["123", "456"],
     "monitora": "Porta",
     "id": {{id-alarme}}
 }
@@ -63,7 +63,7 @@ Content-Type: application/json
 ###
 
 # Excluir Alarme
-PATCH {{alarme-service}}/alarme/{{id-alarme}}
+DELETE {{alarme-service}}/alarme/{{id-alarme}}
 Content-Type: application/json
 ###
 
