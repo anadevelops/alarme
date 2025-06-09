@@ -1,0 +1,137 @@
+@gateway = http://localhost:8000
+
+
+//--------------------------------------------------------
+// Alarme Service (8090)
+//--------------------------------------------------------
+@alarme-service = http://localhost:8090
+@id-alarme = 0
+
+# Consultar Alarmes
+GET {{alarme-service}}/alarme
+Content-Type: application/json
+###
+
+# Consultar Alarme por ID
+GET {{alarme-service}}/alarme/{{id-alarme}}
+Content-Type: application/json
+###
+
+# Cadastrar Alarme
+POST {{alarme-service}}/alarme
+Content-Type: application/json
+
+{
+    "local": "Florianópolis",
+    "usuarios": "Lucas",
+    "monitora": "",
+    "id": {{id-alarme}}
+}
+###
+
+# Atualizar Alarme
+PATCH {{alarme-service}}/alarme/{{id-alarme}}
+Content-Type: application/json
+
+{
+    "local": "Florianópolis",
+    "usuarios": "Lucas",
+    "monitora": ""
+}
+###
+
+# Excluir Alarme
+PATCH {{alarme-service}}/alarme/{{id-alarme}}
+Content-Type: application/json
+###
+
+
+//--------------------------------------------------------
+// Disparo Service (8050)
+//--------------------------------------------------------
+@disparo-service = http://localhost:8050
+
+# Disparar Alarme
+POST {{disparo-service}}/dispara/{{id-alarme}}
+Content-Type: application/json
+###
+
+//--------------------------------------------------------
+// Logging Service (8070)
+//--------------------------------------------------------
+@logging-service = http://localhost:8070
+
+# Consultar Logs
+GET {{logging-service}}/logging
+Content-Type: application/json
+###
+
+# Cadastrar Log
+POST {{logging-service}}/logging
+Content-Type: application/json
+
+{
+    "evento": "Teste",
+    "status": "OK",
+    "descricao": "Uma descrição"
+}
+###
+
+//--------------------------------------------------------
+// Notify Service (8040)
+//--------------------------------------------------------
+@notify-service = http://localhost:8040
+
+# Cadastrar Notificação
+POST {{notify-service}}/notify/
+Content-Type: application/json
+
+{
+    "message": "Agua",
+    "time": "10:34",
+    "usuarios": "Lucas,João"
+}
+###
+
+
+//--------------------------------------------------------
+// Usuario Service (8080)
+//--------------------------------------------------------
+@usuario-service = http://localhost:8080
+@cpf = 456
+
+# Consultar Usuários
+GET {{usuario-service}}/usuario/
+Content-Type: application/json
+###
+
+# Consultar por CPF
+GET {{usuario-service}}/usuario/{{cpf}}
+Content-Type: application/json
+###
+
+# Cadastrar usuário
+POST {{usuario-service}}/usuario/
+Content-Type: application/json
+
+{
+    "nome": "Lucas",
+    "telefone": "489",
+    "cpf": {{cpf}}
+}
+###
+
+# Atualizar usuário
+PATCH {{usuario-service}}/usuario/{{cpf}}
+Content-Type: application/json
+
+{
+    "nome": "Lucas",
+    "telefone": "456"
+}
+###
+
+# Excluir usuário
+DELETE {{usuario-service}}/usuario/{{cpf}}
+Content-Type: application/json
+###
