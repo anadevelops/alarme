@@ -26,4 +26,15 @@ async function getAlarme(id) {
     }
 };
 
-module.exports = { registerLog, getAlarme }
+// Retorna um usuário com o CPF especificado
+async function getUsuario(cpf) {
+    try {
+        const response = await fetch(`http://localhost:8080/usuario/${cpf}`);
+        const data = await response.json();
+        return data;
+    } catch {
+        return null;
+    }
+};
+
+module.exports = { registerLog, getAlarme, getUsuario }
