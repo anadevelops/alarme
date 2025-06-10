@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const log = require("../logging-service/log")
+const { registerLog, getAlarme } = require("../helpers")
 
 console.clear()
 
@@ -8,16 +8,6 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
-async function getAlarme(id) {
-    try {
-        const response = await fetch(`http://localhost:8090/alarme/${id}`);
-        const data = await response.json();
-        return data;
-    } catch {
-        return false;
-    }
-};
 
 // Aciona o alarme
 app.post('/aciona/liga/:id', async (req, res, next) => {
@@ -27,12 +17,12 @@ app.post('/aciona/liga/:id', async (req, res, next) => {
     }
 
     if (dadosAlarme.usuarios.includes(req.body.cpf)) {
-        log('Acionamento', 'OK', `${dadosAlarme.local} ligado com sucesso`);
-        console.log(`${dadosAlarme.local} ligado com sucesso`);
+        registerLog('Acionamento', 'OK', `${dadosAlarme.local} ligado com sucesso`);
+        res.status(200).send(`${dadosAlarme.local} ligado com sucesso`);
     }
     else {
-        log('Acionamento', 'Error', `${dadosAlarme.local} tentativa de ligação por usuário não autorizado`);
-        console.log('Usuário não possui permissão para manipular esse alarme!');
+        registerLog('Acionamento', 'Error', `${dadosAlarme.local} tentativa de ligação por usuário não autorizado`);
+        res.status(500).send('Usuário não possui permissão para manipular esse alarme!');
     }
 });
 
@@ -44,12 +34,12 @@ app.post('/aciona/desliga/:id', async (req, res, next) => {
     }
 
     if (dadosAlarme.usuarios.includes(req.body.cpf)) {
-        log('Desligamento', 'OK', `${dadosAlarme.local} desligado com sucesso`);
-        console.log(`${dadosAlarme.local} desligado com sucesso`);
+        registerLog('Desligamento', 'OK', `${dadosAlarme.local} desligado com sucesso`);
+        res.status(200).send(`${dadosAlarme.local} desligado com sucesso`);
     }
     else {
-        log('Desligamento', 'Error', `${dadosAlarme.local} tentativa de desligamento por usuário não autorizado`);
-        console.log('Usuário não possui permissão para manipular esse alarme!');
+        registerLog('Desligamento', 'Error', `${dadosAlarme.local} tentativa de desligamento por usuário não autorizado`);
+        res.status(500).send('Usuário não possui permissão para manipular esse alarme!');
     }
 });
 

@@ -2,13 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-console.clear()
-
-// Exibe notificação
+// Envia notificação
 app.post('/notify/', (req, res, next) => {
     try {
         const { message, time, usuarios } = req.body
@@ -17,19 +14,18 @@ app.post('/notify/', (req, res, next) => {
         }
 
         // Resposta
-        const msg = "Notificações enviadas com sucesso!"
-        console.log(msg)
-        res.status(200).send(msg)
+        res.status(200).send(`Notificações enviadas com sucesso`)
     }
     catch (error) {
         // Resposta
-        console.log(error)
-        res.status(500).send(error)
+        res.status(500).send(`Erro ao enviar notificações: ${error}`)
     }
 });
 
 
 let porta = 8040;
 app.listen(porta, () => {
- console.log('Servidor em execução na porta: ' + porta);
+    console.clear()
+    console.log("Notify Service")
+    console.log('Servidor em execução na porta: ' + porta);
 });

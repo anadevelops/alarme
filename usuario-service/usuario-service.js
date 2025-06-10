@@ -3,11 +3,8 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3');
 
 const app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
-console.clear()
 
 // Start DB
 var db = new sqlite3.Database('./usuarios.db', (err) => {
@@ -35,10 +32,8 @@ app.post('/usuario/', (req, res, next) => {
     db.run(`INSERT INTO usuarios(nome, telefone, cpf) VALUES (?,?,?)`,
         [req.body.nome, req.body.telefone, req.body.cpf], (err) => {
             if (err) {
-                console.log('Erro: ', err);
-                res.status(500).send('Erro ao cadastrar usuário');
+                res.status(500).send(`Erro ao cadastrar usuário: ${err}`);
             } else {
-                console.log('Usuário cadastrado com sucesso!');
                 res.status(200).send('Cliente cadastrado com sucesso!');
             }
         });
@@ -48,8 +43,7 @@ app.post('/usuario/', (req, res, next) => {
 app.get('/usuario/', (req, res, next) => {
     db.all(`SELECT * FROM usuarios`, [], (err, result) => {
         if (err) {
-            console.log('Erro: ', err);
-            res.status(500).send('Erro ao obter dados');
+            res.status(500).send(`Erro ao obter dados: ${err}`);
         } else {
             res.status(200).json(result);
         }
@@ -61,10 +55,8 @@ app.get('/usuario/:cpf', (req, res, next) => {
     db.get(`SELECT * FROM usuarios WHERE cpf = ?`,
         req.params.cpf, (err, result) => {
             if (err) {
-                console.log('Erro: ', err);
-                res.status(500).send('Erro ao obter dados.');
+                res.status(500).send(`Erro ao obter dados: ${err}`);
             } else if (result == null) {
-                console.log('Usuário não encontrado');
                 res.status(404).send('Usuário não encontrado');
             } else {
                 res.status(200).json(result);
@@ -79,7 +71,6 @@ app.patch('/usuario/:cpf', (req, res, next) => {
             if (err) {
                 res.status(500).send('Erro ao alterar dados');
             } else if (this.changes == 0) {
-                console.log('Usuário não encontrado');
                 res.status(404).send('Usuário não encontrado');
             } else {
                 res.status(200).send('Usuário alterado com sucesso!');
@@ -103,5 +94,7 @@ app.delete('/usuario/:cpf', (req, res, next) => {
 
 let porta = 8080;
 app.listen(porta, () => {
- console.log('Servidor em execução na porta: ' + porta);
+    console.clear()
+    console.log("Usuario Service")
+    console.log('Servidor em execução na porta: ' + porta);
 });
