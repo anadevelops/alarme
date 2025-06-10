@@ -5,6 +5,7 @@ var logger = require('morgan');
 
 app.use(logger('dev'));
 
+// Create proxy
 function selectProxyHost(req) {
     if (req.path.startsWith('/usuario'))
         return 'http://localhost:8080/';
@@ -17,6 +18,8 @@ function selectProxyHost(req) {
     else return null;
 }
 
+
+// Use proxy
 app.use((req, res, next) => {
     var proxyHost = selectProxyHost(req);
     if (proxyHost == null)
@@ -25,6 +28,8 @@ app.use((req, res, next) => {
         httpProxy(proxyHost)(req, res, next);
 });
 
+
+// Listen
 app.listen(8000, () => {
     console.log('API Gateway iniciado!');
 });

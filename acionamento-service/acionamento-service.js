@@ -2,10 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { registerLog, getAlarme } = require("../helpers")
 
-console.clear()
-
 const app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -43,7 +40,10 @@ app.post('/aciona/desliga/:id', async (req, res, next) => {
     }
 });
 
+// Listen
 let porta = 8060;
 app.listen(porta, () => {
- console.log('Servidor em execução na porta: ' + porta);
+    console.clear()
+    console.log(`Acionamento Service`)
+    console.log('Servidor em execução na porta: ' + porta);
 });

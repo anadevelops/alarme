@@ -92,6 +92,7 @@ app.delete('/usuario/:cpf', (req, res, next) => {
     });
 });
 
+// Listen
 let porta = 8080;
 app.listen(porta, () => {
     console.clear()

@@ -17,6 +17,8 @@ app.post('/dispara/:id', async (req, res, next) => {
     res.status(200).send(`${localAlarme} disparado!!`)
 });
 
+
+// Listen
 let porta = 8050;
 app.listen(porta, () => {
     console.clear()

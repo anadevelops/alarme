@@ -1,34 +1,22 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3');
+const express = require(`express`);
+const bodyParser = require(`body-parser`);
+const sqlite3 = require(`sqlite3`);
+const { getUsuario } = require(`../helpers`)
 
 const app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-console.clear()
-
-async function getUsuario(cpf) {
-    try {
-        const response = await fetch(`http://localhost:8080/usuarios/${cpf}`);
-        const data = await response.json();
-        return data;
-    } catch {
-        return false;
-    }
-};
-
-
-var db = new sqlite3.Database('./alarmes.db', (err) => {
+// Criar DB
+var db = new sqlite3.Database(`./alarmes.db`, (err) => {
     if (err) {
-        console.log('ERRO: não foi possível conectar ao SQLite.');
+        console.log(`ERRO: não foi possível conectar ao SQLite.`);
         throw err;
     }
-    console.log('Conectado ao SQLite.');
+    console.log(`Conectado ao SQLite.`);
 });
 
-// Cria a tabela 
+// Cria a tabela
 db.run(`CREATE TABLE IF NOT EXISTS alarmes
         (id INTEGER PRIMARY KEY NOT NULL UNIQUE, 
          local TEXT NOT NULL,
@@ -36,47 +24,44 @@ db.run(`CREATE TABLE IF NOT EXISTS alarmes
          monitora TEXT NOT NULL)`,
          [], (err) => {
             if (err) {
-                console.log('ERRO: Não foi possível criar a tabela');
+                console.log(`ERRO: Não foi possível criar a tabela`);
                 throw err;
             }
 });
 
 // Cadastra o alarme
-app.post('/alarme/', async (req, res, next) => {
+app.post(`/alarme/`, async (req, res, next) => {
     // Validações
     if (!Array.isArray(req.body.usuarios)) {
-        res.status(500).send('Parâmetro \'usuarios\' devem ser uma lista')
+        res.status(500).send(`Parâmetro 'usuarios' deve ser do tipo array`)
     }
     for (const cpf of req.body.usuarios) {
         if (! await getUsuario(cpf)) {
-            res.status(500).send('Um ou mais usuários cadastrados não existem');
+            res.status(500).send(`Um ou mais usuários cadastrados não existem`);
         }
     }
 
     // Adicionar ao banco
     db.run(`INSERT INTO alarmes(id, local, usuarios, monitora) VALUES (?,?,?,?)`,
-        [req.body.id, req.body.local, req.body.usuarios.join(', '), req.body.monitora], (err) => {
+        [req.body.id, req.body.local, req.body.usuarios.join(`, `), req.body.monitora], (err) => {
             if (err) {
-                console.log('Erro: ', err);
-                res.status(500).send('Erro ao cadastrar alarme');
+                res.status(500).send(`Erro ao cadastrar alarme: ${err}`);
             } else {
-                console.log('Alarme cadastrado com sucesso!');
-                res.status(200).send('Alarme cadastrado com sucesso!');
+                res.status(200).send(`Alarme cadastrado com sucesso!`);
             }
         });
 });
 
 // Consulta todos os dados da tabela
-app.get('/alarme/', (req, res, next) => {
+app.get(`/alarme/`, (req, res, next) => {
     db.all(`SELECT * FROM alarmes`, [], (err, rows) => {
         if (err) {
-            console.log('Erro: ', err);
-            res.status(500).send('Erro ao obter dados');
+            res.status(500).send(`Erro ao obter dados: ${err}`);
         } else {
             // Converte a string de usuários em array para cada registro
             const result = rows.map(row => ({
                 ...row,
-                usuarios: row.usuarios ? row.usuarios.split(', ').map(u => u.trim()) : []
+                usuarios: row.usuarios ? row.usuarios.split(`, `).map(u => u.trim()) : []
             }));
 
             res.status(200).json(result);
@@ -85,15 +70,13 @@ app.get('/alarme/', (req, res, next) => {
 });
 
 // Consulta um alarme específico através do ID
-app.get('/alarme/:id', (req, res, next) => {
+app.get(`/alarme/:id`, (req, res, next) => {
     db.get(`SELECT * FROM alarmes WHERE id = ?`,
         req.params.id, (err, result) => {
             if (err) {
-                console.log('Erro: ', err);
-                res.status(500).send('Erro ao obter dados.');
+                res.status(500).send(`Erro ao obter dados: ${err}`);
             } else if (result == null) {
-                console.log('Alarme não encontrado');
-                res.status(404).send('Alarme não encontrado');
+                res.status(404).send(`Alarme não encontrado`);
             } else {
                 res.status(200).json(result);
             }
@@ -101,35 +84,37 @@ app.get('/alarme/:id', (req, res, next) => {
 });
 
 // Altera cadastro do alarme
-app.patch('/alarme/:id', (req, res, next) => {
+app.patch(`/alarme/:id`, (req, res, next) => {
     db.run(`UPDATE alarmes SET local = COALESCE(?, local), usuarios = COALESCE(?, usuarios), monitora = COALESCE(?, usuarios) WHERE id = ?`,
         [req.body.local, req.body.usuarios, req.body.monitora, req.params.id], function(err) {
             if (err) {
-                res.status(500).send('Erro ao alterar dados');
+                res.status(500).send(`Erro ao alterar dados: ${err}`);
             } else if (this.changes == 0) {
-                console.log('Alarme não encontrado');
-                res.status(404).send('Alarme não encontrado');
+                res.status(404).send(`Alarme não encontrado`);
             } else {
-                res.status(200).send('Alarme alterado com sucesso!');
+                res.status(200).send(`Alarme alterado com sucesso!`);
             }
         });
 });
 
 // Exclui o alarme
-app.delete('/alarme/:id', (req, res, next) => {
+app.delete(`/alarme/:id`, (req, res, next) => {
     db.run(`DELETE FROM alarmes WHERE id = ?`, req.params.id, function(err) {
         if (err) {
-            res.status(500).send('Erro ao excluir alarme');
+            res.status(500).send(`Erro ao excluir alarme: ${err}`);
         } else if (this.changes == 0) {
-            console.log('Alarme não encontrado.');
-            res.status(404).send('Alarme não encontrado.');
+            res.status(404).send(`Alarme não encontrado.`);
         } else {
-            res.status(200).send('Alarme excluído com sucesso!');
+            res.status(200).send(`Alarme excluído com sucesso!`);
         }
     });
 });
 
+
+// Listen
 let porta = 8090;
 app.listen(porta, () => {
- console.log('Servidor em execução na porta: ' + porta);
+    console.clear()
+    console.log("Alarme Service")
+    console.log(`Servidor em execução na porta: ` + porta);
 });

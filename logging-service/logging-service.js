@@ -52,6 +52,7 @@ app.get('/logging/', (req, res, next) => {
 });
 
 
+// Listen
 let porta = 8070;
 app.listen(porta, () => {
     console.clear()
