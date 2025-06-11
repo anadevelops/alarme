@@ -69,7 +69,7 @@ app.patch('/usuario/:cpf', (req, res, next) => {
     db.run(`UPDATE usuarios SET nome = COALESCE(?, nome), telefone = COALESCE(?, telefone) WHERE cpf = ?`,
         [req.body.nome, req.body.telefone, req.params.cpf], function(err) {
             if (err) {
-                res.status(500).send('Erro ao alterar dados');
+                res.status(500).send(`Erro ao alterar dados: ${err}`);
             } else if (this.changes == 0) {
                 res.status(404).send('Usuário não encontrado');
             } else {
@@ -82,9 +82,8 @@ app.patch('/usuario/:cpf', (req, res, next) => {
 app.delete('/usuario/:cpf', (req, res, next) => {
     db.run(`DELETE FROM usuarios WHERE cpf = ?`, req.params.cpf, function(err) {
         if (err) {
-            res.status(500).send('Erro ao excluir usuário');
+            res.status(500).send(`Erro ao excluir usuário: ${err}`);
         } else if (this.changes == 0) {
-            console.log('Usuário não encontrado.');
             res.status(404).send('Usuário não encontrado.');
         } else {
             res.status(200).send('Usuário excluído com sucesso!');

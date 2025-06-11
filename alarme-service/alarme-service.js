@@ -31,14 +31,24 @@ db.run(`CREATE TABLE IF NOT EXISTS alarmes
 
 // Cadastra o alarme
 app.post(`/alarme/`, async (req, res, next) => {
-    // Validações
+    // Parametro usuários é ARRAY
     if (!Array.isArray(req.body.usuarios)) {
         res.status(500).send(`Parâmetro 'usuarios' deve ser do tipo array`)
+        return
     }
+
+    // Usuários do ARRAY existem
     for (const cpf of req.body.usuarios) {
         if (! await getUsuario(cpf)) {
             res.status(500).send(`Um ou mais usuários cadastrados não existem`);
+            return
         }
+    }
+
+    // Existe pelo menos um usuário
+    if (req.body.usuarios.length == 0) {
+        res.status(500).send(`Pelo menos um usuário deve ser atribuido a um alarme`)
+        return
     }
 
     // Adicionar ao banco
@@ -78,6 +88,7 @@ app.get(`/alarme/:id`, (req, res, next) => {
             } else if (result == null) {
                 res.status(404).send(`Alarme não encontrado`);
             } else {
+                result.usuarios = result.usuarios.split(`, `)
                 res.status(200).json(result);
             }
         });
@@ -85,14 +96,34 @@ app.get(`/alarme/:id`, (req, res, next) => {
 
 // Altera cadastro do alarme
 app.patch(`/alarme/:id`, async (req, res, next) => {
-    // Validações
+    // Usuário tem permissão sobre o alarme
     const dadosAlarme = await getAlarme(req.params.id);
     if (!dadosAlarme.usuarios.includes(req.body.cpf)) {
-        // console.log('CPF no body: ', req.body.cpf);
-        // console.log('CPFs no alarme: ', dadosAlarme.usuarios);
         res.status(500).send(`Usuário não possui permissão para alterar o alarme`);
+        return
     }
 
+    // Parametro usuários é ARRAY
+    if (!Array.isArray(req.body.usuarios)) {
+        res.status(500).send(`Parâmetro 'usuarios' deve ser do tipo array`)
+        return
+    }
+
+    // Usuários do ARRAY existem
+    for (const cpf of req.body.usuarios) {
+        if (! await getUsuario(cpf)) {
+            res.status(500).send(`Um ou mais usuários cadastrados não existem`);
+            return
+        }
+    }
+
+    // Existe pelo menos um usuário
+    if (req.body.usuarios.length == 0) {
+        res.status(500).send(`Pelo menos um usuário deve ser atribuido a um alarme`)
+        return
+    }
+
+    // Atualiza no BD
     db.run(`UPDATE alarmes SET local = COALESCE(?, local), usuarios = COALESCE(?, usuarios), monitora = COALESCE(?, usuarios) WHERE id = ?`,
         [req.body.local, req.body.usuarios.join(`, `), req.body.monitora, req.params.id], function(err) {
             if (err) {
@@ -106,7 +137,14 @@ app.patch(`/alarme/:id`, async (req, res, next) => {
 });
 
 // Exclui o alarme
-app.delete(`/alarme/:id`, (req, res, next) => {
+app.delete(`/alarme/:id`, async (req, res, next) => {
+    // Usuário tem permissão sobre o alarme
+    const dadosAlarme = await getAlarme(req.params.id);
+    if (!dadosAlarme.usuarios.includes(req.body.cpf)) {
+        res.status(500).send(`Usuário não possui permissão para alterar o alarme`);
+        return
+    }
+
     db.run(`DELETE FROM alarmes WHERE id = ?`, req.params.id, function(err) {
         if (err) {
             res.status(500).send(`Erro ao excluir alarme: ${err}`);

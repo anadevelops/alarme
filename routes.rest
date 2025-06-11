@@ -6,7 +6,7 @@
 @acionamento-service = http://localhost:8000
 
 # Ligar Alarme
-POST {{acionamento-service}}/aciona/liga/0
+POST {{acionamento-service}}/aciona/liga/1
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ Content-Type: application/json
 ###
 
 # Desligar Alarme
-POST {{acionamento-service}}/aciona/desliga/0
+POST {{acionamento-service}}/aciona/desliga/1
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 // Alarme Service (8090)
 //--------------------------------------------------------
 @alarme-service = http://localhost:8000
-@id-alarme = 1
+@id-alarme = 2
 
 # Consultar Alarmes
 GET {{alarme-service}}/alarme
@@ -45,8 +45,8 @@ Content-Type: application/json
 
 {
     "local": "CTC",
-    "usuarios": ["136", "456"],
-    "monitora": "Porta",
+    "usuarios": ["136"],
+    "monitora": "Teto",
     "id": {{id-alarme}}
 }
 ###
@@ -56,15 +56,20 @@ PATCH {{alarme-service}}/alarme/{{id-alarme}}
 Content-Type: application/json
 
 {
+    "cpf": "456",
     "local": "CTC Térreo",
-    "usuarios": ["136", "438"],
-    "monitora": "Porta"
+    "usuarios": ["456"],
+    "monitora": "Janela"
 }
 ###
 
 # Excluir Alarme
 DELETE {{alarme-service}}/alarme/{{id-alarme}}
 Content-Type: application/json
+
+{
+    "cpf": "456"
+}
 ###
 
 
@@ -74,7 +79,7 @@ Content-Type: application/json
 @disparo-service = http://localhost:8000
 
 # Disparar Alarme
-POST {{disparo-service}}/dispara/10
+POST {{disparo-service}}/dispara/1
 Content-Type: application/json
 ###
 
@@ -112,8 +117,7 @@ Content-Type: application/json
 
 {
     "message": "Agua",
-    "time": "10:34",
-    "usuarios": "Lucas,João"
+    "usuarios": ["136", "247"]
 }
 ###
 

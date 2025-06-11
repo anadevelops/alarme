@@ -15,6 +15,21 @@ async function registerLog (evento, status, descricao) {
     }
 }
 
+// Envia notificações a usuários
+async function sendNotification (message, usuarios) {
+    try {
+        await fetch('http://localhost:8040/notify', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                message, usuarios
+            })
+        });
+    } catch {
+        console.log("Falha ao enviar notificações.")
+    }
+}
+
 // Retorna um Alarme com o ID especificado
 async function getAlarme(id) {
     try {
@@ -37,4 +52,4 @@ async function getUsuario(cpf) {
     }
 };
 
-module.exports = { registerLog, getAlarme, getUsuario }
+module.exports = { registerLog, sendNotification, getAlarme, getUsuario }

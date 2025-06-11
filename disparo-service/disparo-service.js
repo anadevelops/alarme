@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { getAlarme, registerLog } = require("../helpers")
+const { getAlarme, registerLog, sendNotification } = require("../helpers")
 
 const app = express();
 app.use(bodyParser.json());
@@ -8,13 +8,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Dispara o alarme
 app.post('/dispara/:id', async (req, res, next) => {
-    const localAlarme = await getAlarme(req.params.id);
+    const dadosAlarme = await getAlarme(req.params.id);
     if (!dadosAlarme) {
         res.status(500).send('ID de alarme inválido');
     };
 
-    registerLog('Disparo', 'OK', `${localAlarme} disparado!!`);
-    res.status(200).send(`${localAlarme} disparado!!`)
+    // Mensagem
+    const msg = `Alarme ${dadosAlarme.monitora} disparado em ${dadosAlarme.local}!`
+    sendNotification(msg, dadosAlarme.usuarios)
+    registerLog('Disparo', 'OK', msg);
+    res.status(200).send(msg)
 });
 
 

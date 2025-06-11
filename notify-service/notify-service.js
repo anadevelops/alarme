@@ -8,9 +8,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Envia notificação
 app.post('/notify/', (req, res, next) => {
     try {
-        const { message, time, usuarios } = req.body
-        for (const usuario of usuarios.split(",")) {
-            console.log(`[${time} - ${usuario}] ${message}`)
+        const { message, usuarios } = req.body
+        for (const usuario of usuarios) {
+            console.log(`[${new Date().toString()} - ${usuario}] ${message}`)
         }
 
         // Resposta
