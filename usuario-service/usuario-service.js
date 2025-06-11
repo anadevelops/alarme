@@ -70,7 +70,7 @@ app.get('/usuario/', (req, res, next) => {
 
 // Consulta um usuário específico através do CPF
 app.get('/usuario/:cpf', (req, res, next) => {
-    console.log(`GET request on /usuario`)
+    console.log(`GET request on /usuario/${req.params.cpf}`)
     
     db.get(`SELECT * FROM usuarios WHERE cpf = ?`,
         req.params.cpf, (err, result) => {
@@ -86,7 +86,7 @@ app.get('/usuario/:cpf', (req, res, next) => {
 
 // Altera cadastro do usuário
 app.patch('/usuario/:cpf', (req, res, next) => {
-    console.log(`PATCH request on /usuario`)
+    console.log(`PATCH request on /usuario/${req.params.cpf}`)
 
     db.run(`UPDATE usuarios SET nome = COALESCE(?, nome), telefone = COALESCE(?, telefone) WHERE cpf = ?`,
         [req.body.nome, req.body.telefone, req.params.cpf], function(err) {
@@ -102,7 +102,7 @@ app.patch('/usuario/:cpf', (req, res, next) => {
 
 // Exclui o usuário
 app.delete('/usuario/:cpf', (req, res, next) => {
-    console.log(`DELETE request on /usuario`)
+    console.log(`DELETE request on /usuario/${req.params.cpf}`)
 
     db.run(`DELETE FROM usuarios WHERE cpf = ?`, req.params.cpf, function(err) {
         if (err) {

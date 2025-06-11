@@ -54,7 +54,7 @@ function validateAlarmAndUser({alarme, usuario, cpf}) {
 
 // Liga o alarme
 app.post('/aciona/liga/:id', async (req, res, next) => {
-    console.log(`POST request on /aciona/liga`)
+    console.log(`POST request on /aciona/liga/${req.params.id}`)
 
     const cpf = req.body.cpf
     const alarme = await getAlarme(req.params.id);
@@ -75,7 +75,7 @@ app.post('/aciona/liga/:id', async (req, res, next) => {
 
 // Desliga o alarme
 app.post('/aciona/desliga/:id', async (req, res, next) => {
-    console.log(`POST request on /aciona/desliga`)
+    console.log(`POST request on /aciona/desliga/${req.params.id}`)
 
     const cpf = req.body.cpf
     const alarme = await getAlarme(req.params.id);

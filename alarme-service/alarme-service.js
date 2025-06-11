@@ -127,7 +127,7 @@ app.get(`/alarme/`, (req, res, next) => {
 
 // Consulta um alarme específico através do ID
 app.get(`/alarme/:id`, (req, res, next) => {
-    console.log(`GET request on /alarme`)
+    console.log(`GET request on /alarme/${req.params.id}`)
 
     db.get(`SELECT * FROM alarmes WHERE id = ?`,
         req.params.id, (err, result) => {
@@ -144,7 +144,7 @@ app.get(`/alarme/:id`, (req, res, next) => {
 
 // Atualiza alarme
 app.patch(`/alarme/:id`, async (req, res, next) => {
-    console.log(`PATCH request on /alarme`)
+    console.log(`PATCH request on /alarme/${req.params.id}`)
 
     // Valida permissao
     const authorize = await authorizeUser(req.params.id, req.body.cpf)
@@ -169,7 +169,7 @@ app.patch(`/alarme/:id`, async (req, res, next) => {
 
 // Exclui o alarme
 app.delete(`/alarme/:id`, async (req, res, next) => {
-    console.log(`DELETE request on /alarme`)
+    console.log(`DELETE request on /alarme/${req.params.id}`)
 
     // Valida permissao
     const authorize = await authorizeUser(req.params.id, req.body.cpf)

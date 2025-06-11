@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Dispara o alarme
 app.post('/dispara/:id', async (req, res, next) => {
-    console.log(`POST request on /dispara`)
+    console.log(`POST request on /dispara/${req.params.id}`)
 
     const dadosAlarme = await getAlarme(req.params.id);
     if (!dadosAlarme) {
