@@ -1,5 +1,9 @@
 
 
+//----------------------------------------------------------------
+// Logging and Notifications
+//----------------------------------------------------------------
+
 // Registra um novo log
 async function registerLog (evento, status, descricao) {
     try {
@@ -30,6 +34,11 @@ async function sendNotification (message, usuarios) {
     }
 }
 
+
+//----------------------------------------------------------------
+// Getters
+//----------------------------------------------------------------
+
 // Retorna um Alarme com o ID especificado
 async function getAlarme(id) {
     try {
@@ -52,4 +61,11 @@ async function getUsuario(cpf) {
     }
 };
 
+//----------------------------------------------------------------
+// Export
+//----------------------------------------------------------------
+
 module.exports = { registerLog, sendNotification, getAlarme, getUsuario }
+
+
+//----------------------------------------------------------------

@@ -6,6 +6,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+//----------------------------------------------------------------
+// Criação/Carregamento Base de Dados
+//----------------------------------------------------------------
+
 // Start DB
 var db = new sqlite3.Database('./usuarios.db', (err) => {
     if (err) {
@@ -26,6 +30,11 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios
                 throw err;
             }
 });
+
+
+//----------------------------------------------------------------
+// Routes
+//----------------------------------------------------------------
 
 // Cadastra o usuário
 app.post('/usuario/', (req, res, next) => {
@@ -91,6 +100,11 @@ app.delete('/usuario/:cpf', (req, res, next) => {
     });
 });
 
+
+//----------------------------------------------------------------
+// Server
+//----------------------------------------------------------------
+
 // Listen
 let porta = 8080;
 app.listen(porta, () => {
@@ -98,3 +112,6 @@ app.listen(porta, () => {
     console.log("Usuario Service")
     console.log('Servidor em execução na porta: ' + porta);
 });
+
+
+//----------------------------------------------------------------

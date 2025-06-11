@@ -1,58 +1,59 @@
-@gateway = http://localhost:8000
+
 
 //--------------------------------------------------------
-// Acionamento Service (8060)
+// Disparo (8050), Acionamento (8060), Alarme (8090), Usuario (8080) via Gateway
 //--------------------------------------------------------
-@acionamento-service = http://localhost:8000
+@gateway = http://localhost:8000
+@id-alarme = 1
+@cpf = 136
+
+# Disparar Alarme
+POST {{gateway}}/dispara/{{id-alarme}}
+Content-Type: application/json
+###
 
 # Ligar Alarme
-POST {{acionamento-service}}/aciona/liga/1
+POST {{gateway}}/aciona/liga/{{id-alarme}}
 Content-Type: application/json
 
 {
-    "cpf": "136"
+    "cpf": {{cpf}}
 }
 ###
 
 # Desligar Alarme
-POST {{acionamento-service}}/aciona/desliga/1
+POST {{gateway}}/aciona/desliga/{{id-alarme}}
 Content-Type: application/json
 
 {
-    "cpf": "136"
+    "cpf": {{cpf}}
 }
 ###
 
-//--------------------------------------------------------
-// Alarme Service (8090)
-//--------------------------------------------------------
-@alarme-service = http://localhost:8000
-@id-alarme = 2
-
 # Consultar Alarmes
-GET {{alarme-service}}/alarme
+GET {{gateway}}/alarme
 Content-Type: application/json
 ###
 
 # Consultar Alarme por ID
-GET {{alarme-service}}/alarme/{{id-alarme}}
+GET {{gateway}}/alarme/{{id-alarme}}
 Content-Type: application/json
 ###
 
 # Cadastrar Alarme
-POST {{alarme-service}}/alarme
+POST {{gateway}}/alarme
 Content-Type: application/json
 
 {
-    "local": "CTC",
+    "local": "CTC Homologação",
     "usuarios": ["136"],
-    "monitora": "Teto",
+    "monitora": "Porta",
     "id": {{id-alarme}}
 }
 ###
 
 # Atualizar Alarme
-PATCH {{alarme-service}}/alarme/{{id-alarme}}
+PATCH {{gateway}}/alarme/{{id-alarme}}
 Content-Type: application/json
 
 {
@@ -64,7 +65,7 @@ Content-Type: application/json
 ###
 
 # Excluir Alarme
-DELETE {{alarme-service}}/alarme/{{id-alarme}}
+DELETE {{gateway}}/alarme/{{id-alarme}}
 Content-Type: application/json
 
 {
@@ -72,20 +73,45 @@ Content-Type: application/json
 }
 ###
 
+# Consultar Usuários
+GET {{gateway}}/usuario/
+Content-Type: application/json
+###
 
-//--------------------------------------------------------
-// Disparo Service (8050)
-//--------------------------------------------------------
-@disparo-service = http://localhost:8000
+# Consultar Usuário por CPF
+GET {{gateway}}/usuario/{{cpf}}
+Content-Type: application/json
+###
 
-# Disparar Alarme
-POST {{disparo-service}}/dispara/1
+# Cadastrar Usuário
+POST {{gateway}}/usuario/
+Content-Type: application/json
+
+{
+    "nome": "Lucas",
+    "telefone": "489",
+    "cpf": {{cpf}}
+}
+###
+
+# Atualizar Usuário
+PATCH {{gateway}}/usuario/{{cpf}}
+Content-Type: application/json
+
+{
+    "nome": "Lucas",
+    "telefone": "456"
+}
+###
+
+# Excluir Usuário
+DELETE {{gateway}}/usuario/{{cpf}}
 Content-Type: application/json
 ###
 
 
 //--------------------------------------------------------
-// Logging Service (8070)
+// Logging (8070)
 //--------------------------------------------------------
 @logging-service = http://localhost:8070
 
@@ -107,7 +133,7 @@ Content-Type: application/json
 
 
 //--------------------------------------------------------
-// Notify Service (8040)
+// Notify (8040)
 //--------------------------------------------------------
 @notify-service = http://localhost:8040
 
@@ -123,43 +149,3 @@ Content-Type: application/json
 
 
 //--------------------------------------------------------
-// Usuario Service (8080)
-//--------------------------------------------------------
-@usuario-service = http://localhost:8000
-@cpf = 456
-
-# Consultar Usuários
-GET {{usuario-service}}/usuario/
-Content-Type: application/json
-###
-
-# Consultar Usuário por CPF
-GET {{usuario-service}}/usuario/{{cpf}}
-Content-Type: application/json
-###
-
-# Cadastrar Usuário
-POST {{usuario-service}}/usuario/
-Content-Type: application/json
-
-{
-    "nome": "Lucas",
-    "telefone": "489",
-    "cpf": {{cpf}}
-}
-###
-
-# Atualizar Usuário
-PATCH {{usuario-service}}/usuario/{{cpf}}
-Content-Type: application/json
-
-{
-    "nome": "Lucas",
-    "telefone": "456"
-}
-###
-
-# Excluir Usuário
-DELETE {{usuario-service}}/usuario/{{cpf}}
-Content-Type: application/json
-###

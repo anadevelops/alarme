@@ -6,37 +6,66 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// Liga o alarme
-app.post('/aciona/liga/:id', async (req, res, next) => {
-    const dadosAlarme = await getAlarme(req.params.id);
-    const usuarioAtual = await getUsuario(req.body.cpf)
+//----------------------------------------------------------------
+// Helpers
+//----------------------------------------------------------------
 
+// Valida permissionamento e existencia
+function validateAlarmAndUser({alarme, usuario, cpf}) {
     // Alarme não existe
-    if (!dadosAlarme) {
-        res.status(500).send('ID de alarme inválido');
-        return
+    if (!alarme) return {
+        success: false,
+        message: 'ID de alarme inválido',
     }
-    const identificacaoAlarme = `Alarme ${dadosAlarme.monitora} em ${dadosAlarme.local}`
-
+    const identificacaoAlarme = `Alarme ${alarme.monitora} em ${alarme.local}`
+    
     // Usuário não existe
-    if (!usuarioAtual) {
-        const CPFText = req.body.cpf ? ` (CPF: ${req.body.cpf})` : ""
+    if (!usuario) {
+        const CPFText = cpf ? ` (CPF: ${cpf})` : ""
         registerLog('Acionamento', 'Error', `Tentativa de ligar ${identificacaoAlarme} por usuario não identificado${CPFText}`)
-        res.status(500).send('Permissão insuficiente!');
-        return
+        return {
+            sucess: false,
+            message: `Permissão Insuficiente`
+        }
     }
-    const identificacaoUsuario = `${usuarioAtual.nome} (CPF: ${usuarioAtual.cpf})`
+    const identificacaoUsuario = `${usuario.nome} (CPF: ${usuario.cpf})`
+    
 
     // Usuário sem permissão
-    if (!dadosAlarme.usuarios.includes(req.body.cpf)) {
+    if (!alarme.usuarios.includes(String(cpf))) {
         registerLog('Acionamento', 'Error', `Tentativa de ligar ${identificacaoAlarme} por usuario não autorizado ${identificacaoUsuario}`);
-        res.status(500).send('Permissão insuficiente!');
-        return
+        return {
+            sucess: false,
+            message: `Permissão Insuficiente`
+        }
     }
+
+    return {
+        success: true,
+        identificacaoAlarme,
+        identificacaoUsuario
+    }
+}
+
+
+//----------------------------------------------------------------
+// API Routes
+//----------------------------------------------------------------
+
+// Liga o alarme
+app.post('/aciona/liga/:id', async (req, res, next) => {
+    const cpf = req.body.cpf
+    const alarme = await getAlarme(req.params.id);
+    const usuario = await getUsuario(cpf)
+
+    // Validações
+    const validate = validateAlarmAndUser({alarme, usuario, cpf})
+    if (!validate.success) {res.status(500).send(validate.message); return}
+    const { identificacaoAlarme, identificacaoUsuario } = validate
 
     // Registros
     const msg = `${identificacaoAlarme} ligado com sucesso por ${identificacaoUsuario}.`
-    sendNotification(msg, dadosAlarme.usuarios)
+    sendNotification(msg, alarme.usuarios)
     registerLog('Acionamento', 'OK', msg);
 
     res.status(200).send(`${identificacaoAlarme} ligado com sucesso!`);
@@ -44,39 +73,27 @@ app.post('/aciona/liga/:id', async (req, res, next) => {
 
 // Desliga o alarme
 app.post('/aciona/desliga/:id', async (req, res, next) => {
-    const dadosAlarme = await getAlarme(req.params.id);
-    const usuarioAtual = await getUsuario(req.body.cpf)
+    const cpf = req.body.cpf
+    const alarme = await getAlarme(req.params.id);
+    const usuario = await getUsuario(cpf)
 
-    // Alarme não existe
-    if (!dadosAlarme) {
-        res.status(500).send('ID de alarme inválido');
-        return
-    }
-    const identificacaoAlarme = `Alarme ${dadosAlarme.monitora} em ${dadosAlarme.local}`
-
-    // Usuário não existe
-    if (!usuarioAtual) {
-        const CPFText = req.body.cpf ? ` (CPF: ${req.body.cpf})` : ""
-        registerLog('Acionamento', 'Error', `Tentativa de desligar ${identificacaoAlarme} por usuario não identificado${CPFText}`)
-        res.status(500).send('Permissão insuficiente!');
-        return
-    }
-    const identificacaoUsuario = `${usuarioAtual.nome} (CPF: ${usuarioAtual.cpf})`
-
-    // Usuário sem permissão
-    if (!dadosAlarme.usuarios.includes(req.body.cpf)) {
-        registerLog('Acionamento', 'Error', `Tentativa de desligar ${identificacaoAlarme} por usuario não autorizado ${identificacaoUsuario}`);
-        res.status(500).send('Permissão insuficiente!');
-        return
-    }
+    // Validações
+    const validate = validateAlarmAndUser({alarme, usuario, cpf})
+    if (!validate.success) {res.status(500).send(validate.message); return}
+    const { identificacaoAlarme, identificacaoUsuario } = validate
 
     // Registros
     const msg = `${identificacaoAlarme} desligado com sucesso por ${identificacaoUsuario}.`
-    sendNotification(msg, dadosAlarme.usuarios)
+    sendNotification(msg, alarme.usuarios)
     registerLog('Acionamento', 'OK', msg);
 
     res.status(200).send(`${identificacaoAlarme} desligado com sucesso!`);
 });
+
+
+//----------------------------------------------------------------
+// Server
+//----------------------------------------------------------------
 
 // Listen
 let porta = 8060;
@@ -85,3 +102,6 @@ app.listen(porta, () => {
     console.log(`Acionamento Service`)
     console.log('Servidor em execução na porta: ' + porta);
 });
+
+
+//----------------------------------------------------------------

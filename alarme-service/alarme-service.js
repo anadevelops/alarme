@@ -7,6 +7,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+//----------------------------------------------------------------
+// Criação/Carregamento Base de Dados
+//----------------------------------------------------------------
+
 // Criar DB
 var db = new sqlite3.Database(`./alarmes.db`, (err) => {
     if (err) {
@@ -28,6 +32,10 @@ db.run(`CREATE TABLE IF NOT EXISTS alarmes
                 throw err;
             }
 });
+
+//----------------------------------------------------------------
+// Routes
+//----------------------------------------------------------------
 
 // Cadastra o alarme
 app.post(`/alarme/`, async (req, res, next) => {
@@ -157,6 +165,10 @@ app.delete(`/alarme/:id`, async (req, res, next) => {
 });
 
 
+//----------------------------------------------------------------
+// Server
+//----------------------------------------------------------------
+
 // Listen
 let porta = 8090;
 app.listen(porta, () => {
@@ -164,3 +176,5 @@ app.listen(porta, () => {
     console.log("Alarme Service")
     console.log(`Servidor em execução na porta: ` + porta);
 });
+
+//----------------------------------------------------------------

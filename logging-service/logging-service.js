@@ -6,6 +6,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+//----------------------------------------------------------------
+// Criação/Carregamento Base de Dados
+//----------------------------------------------------------------
+
 // Carrega base de dados
 var db = new sqlite3.Database('./logging.db', (err) => {
     if (err) {
@@ -28,10 +32,25 @@ db.run(`CREATE TABLE IF NOT EXISTS logging (
             }
 });
 
+
+//----------------------------------------------------------------
+// Routes
+//----------------------------------------------------------------
+
 // Cadastra um novo registro
 app.post('/logging/', (req, res, next) => {
+    const horario = new Date().toLocaleString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour12: false
+    })
+
+    // Add to DB
     db.run(`INSERT INTO logging (evento, status, descricao, horario) VALUES (?,?,?,?)`,
-        [req.body.evento, req.body.status, req.body.descricao, new Date().toString()], (err) => {
+        [req.body.evento, req.body.status, req.body.descricao, horario], (err) => {
             if (err) {
                 res.status(500).send(`Erro ao cadastrar log: ${err}`);
             } else {
@@ -46,11 +65,15 @@ app.get('/logging/', (req, res, next) => {
         if (err) {
             res.status(500).send(`Erro ao obter dados: ${err}`);
         } else {
-            res.status(200).json(result);
+            res.status(200).json(result.reverse());
         }
     });
 });
 
+
+//----------------------------------------------------------------
+// Server
+//----------------------------------------------------------------
 
 // Listen
 let porta = 8070;
@@ -59,3 +82,6 @@ app.listen(porta, () => {
     console.log("Logging Service")
     console.log('Servidor em execução na porta: ' + porta);
 });
+
+
+//----------------------------------------------------------------

@@ -6,6 +6,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+//----------------------------------------------------------------
+// Routes
+//----------------------------------------------------------------
+
 // Dispara o alarme
 app.post('/dispara/:id', async (req, res, next) => {
     const dadosAlarme = await getAlarme(req.params.id);
@@ -21,6 +25,10 @@ app.post('/dispara/:id', async (req, res, next) => {
 });
 
 
+//----------------------------------------------------------------
+// Server
+//----------------------------------------------------------------
+
 // Listen
 let porta = 8050;
 app.listen(porta, () => {
@@ -28,3 +36,6 @@ app.listen(porta, () => {
     console.log("Disparo Service")
     console.log('Servidor em execução na porta: ' + porta);
 });
+
+
+//----------------------------------------------------------------
