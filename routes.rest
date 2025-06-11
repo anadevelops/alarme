@@ -4,7 +4,7 @@
 // Disparo (8050), Acionamento (8060), Alarme (8090), Usuario (8080) via Gateway
 //--------------------------------------------------------
 @gateway = http://localhost:8000
-@id-alarme = 1
+@id-alarme = 2
 @cpf = 136
 
 # Disparar Alarme
@@ -17,7 +17,7 @@ POST {{gateway}}/aciona/liga/{{id-alarme}}
 Content-Type: application/json
 
 {
-    "cpf": {{cpf}}
+    "cpf": "{{cpf}}"
 }
 ###
 
@@ -26,7 +26,7 @@ POST {{gateway}}/aciona/desliga/{{id-alarme}}
 Content-Type: application/json
 
 {
-    "cpf": {{cpf}}
+    "cpf": "{{cpf}}"
 }
 ###
 
@@ -46,7 +46,7 @@ Content-Type: application/json
 
 {
     "local": "CTC Homologação",
-    "usuarios": ["136"],
+    "usuarios": ["136", "456"],
     "monitora": "Porta",
     "id": {{id-alarme}}
 }
@@ -57,9 +57,9 @@ PATCH {{gateway}}/alarme/{{id-alarme}}
 Content-Type: application/json
 
 {
-    "cpf": "456",
+    "cpf": "{{cpf}}",
     "local": "CTC Térreo",
-    "usuarios": ["456"],
+    "usuarios": ["456", "136", "180"],
     "monitora": "Janela"
 }
 ###
@@ -69,7 +69,7 @@ DELETE {{gateway}}/alarme/{{id-alarme}}
 Content-Type: application/json
 
 {
-    "cpf": "456"
+    "cpf": "{{cpf}}"
 }
 ###
 
@@ -90,7 +90,7 @@ Content-Type: application/json
 {
     "nome": "Lucas",
     "telefone": "489",
-    "cpf": {{cpf}}
+    "cpf": "{{cpf}}"
 }
 ###
 
