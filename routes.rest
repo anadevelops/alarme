@@ -3,7 +3,7 @@
 //--------------------------------------------------------
 // Acionamento Service (8060)
 //--------------------------------------------------------
-@acionamento-service = http://localhost:8060
+@acionamento-service = http://localhost:8000
 
 # Ligar Alarme
 POST {{acionamento-service}}/aciona/liga/0
@@ -26,7 +26,7 @@ Content-Type: application/json
 //--------------------------------------------------------
 // Alarme Service (8090)
 //--------------------------------------------------------
-@alarme-service = http://localhost:8090
+@alarme-service = http://localhost:8000
 @id-alarme = 1
 
 # Consultar Alarmes
@@ -71,7 +71,7 @@ Content-Type: application/json
 //--------------------------------------------------------
 // Disparo Service (8050)
 //--------------------------------------------------------
-@disparo-service = http://localhost:8050
+@disparo-service = http://localhost:8000
 
 # Disparar Alarme
 POST {{disparo-service}}/dispara/10
@@ -121,7 +121,7 @@ Content-Type: application/json
 //--------------------------------------------------------
 // Usuario Service (8080)
 //--------------------------------------------------------
-@usuario-service = http://localhost:8080
+@usuario-service = http://localhost:8000
 @cpf = 456
 
 # Consultar Usuários
