@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3');
+const { getUsuario } = require('../helpers')
 
 const app = express();
 app.use(bodyParser.json());
@@ -37,7 +38,11 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios
 //----------------------------------------------------------------
 
 // Cadastra o usuário
-app.post('/usuario/', (req, res, next) => {
+app.post('/usuario/', async (req, res, next) => {
+    // Valida se CPF já está em uso
+    if (await getUsuario(req.body.cpf)) { res.status(500).send(`Erro ao cadastrar usuario: CPF já está cadastrado`); return }
+
+    // Atualiza base
     db.run(`INSERT INTO usuarios(nome, telefone, cpf) VALUES (?,?,?)`,
         [req.body.nome, req.body.telefone, req.body.cpf], (err) => {
             if (err) {

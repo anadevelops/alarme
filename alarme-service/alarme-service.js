@@ -86,6 +86,9 @@ async function authorizeUser(idAlarme, cpf) {
 
 // Cadastra o alarme
 app.post(`/alarme/`, async (req, res, next) => {
+    // Valida se alarme com mesmo ID já não existe
+    if (await getAlarme(req.body.id)) {res.status(500).send(`Erro ao cadastrar alarme: ID em uso`); return}
+
     // Validar dados
     const validation = await validaDadosAlarme(req.body)
     if (!validation.success) { res.status(500).send(validation.message); return }
