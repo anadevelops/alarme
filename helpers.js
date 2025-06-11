@@ -18,7 +18,7 @@ async function registerLog (evento, status, descricao) {
 // Retorna um Alarme com o ID especificado
 async function getAlarme(id) {
     try {
-        const response = await fetch(`http://localhost:8090/alarme/${id}`);
+        const response = await fetch(`http://localhost:8000/alarme/${id}`);
         const data = await response.json();
         return data;
     } catch {
@@ -29,7 +29,7 @@ async function getAlarme(id) {
 // Retorna um usuário com o CPF especificado
 async function getUsuario(cpf) {
     try {
-        const response = await fetch(`http://localhost:8080/usuario/${cpf}`);
+        const response = await fetch(`http://localhost:8000/usuario/${cpf}`);
         const data = await response.json();
         return data;
     } catch {

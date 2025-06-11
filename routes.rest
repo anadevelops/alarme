@@ -45,7 +45,7 @@ Content-Type: application/json
 
 {
     "local": "CTC",
-    "usuarios": ["123", "456"],
+    "usuarios": ["136", "456"],
     "monitora": "Porta",
     "id": {{id-alarme}}
 }
@@ -57,7 +57,7 @@ Content-Type: application/json
 
 {
     "local": "CTC Térreo",
-    "usuarios": "136, 438",
+    "usuarios": ["136", "438"],
     "monitora": "Porta"
 }
 ###

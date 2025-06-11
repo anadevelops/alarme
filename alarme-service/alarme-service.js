@@ -1,7 +1,7 @@
 const express = require(`express`);
 const bodyParser = require(`body-parser`);
 const sqlite3 = require(`sqlite3`);
-const { getUsuario } = require(`../helpers`)
+const { getUsuario, getAlarme } = require(`../helpers`)
 
 const app = express();
 app.use(bodyParser.json());
@@ -84,9 +84,17 @@ app.get(`/alarme/:id`, (req, res, next) => {
 });
 
 // Altera cadastro do alarme
-app.patch(`/alarme/:id`, (req, res, next) => {
+app.patch(`/alarme/:id`, async (req, res, next) => {
+    // Validações
+    const dadosAlarme = await getAlarme(req.params.id);
+    if (!dadosAlarme.usuarios.includes(req.body.cpf)) {
+        // console.log('CPF no body: ', req.body.cpf);
+        // console.log('CPFs no alarme: ', dadosAlarme.usuarios);
+        res.status(500).send(`Usuário não possui permissão para alterar o alarme`);
+    }
+
     db.run(`UPDATE alarmes SET local = COALESCE(?, local), usuarios = COALESCE(?, usuarios), monitora = COALESCE(?, usuarios) WHERE id = ?`,
-        [req.body.local, req.body.usuarios, req.body.monitora, req.params.id], function(err) {
+        [req.body.local, req.body.usuarios.join(`, `), req.body.monitora, req.params.id], function(err) {
             if (err) {
                 res.status(500).send(`Erro ao alterar dados: ${err}`);
             } else if (this.changes == 0) {

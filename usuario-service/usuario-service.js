@@ -34,7 +34,7 @@ app.post('/usuario/', (req, res, next) => {
             if (err) {
                 res.status(500).send(`Erro ao cadastrar usuário: ${err}`);
             } else {
-                res.status(200).send('Cliente cadastrado com sucesso!');
+                res.status(200).send('Usuário cadastrado com sucesso!');
             }
         });
 });
