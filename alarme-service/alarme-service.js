@@ -86,6 +86,8 @@ async function authorizeUser(idAlarme, cpf) {
 
 // Cadastra o alarme
 app.post(`/alarme/`, async (req, res, next) => {
+    console.log(`POST request on /alarme`)
+
     // Valida se alarme com mesmo ID já não existe
     if (await getAlarme(req.body.id)) {res.status(500).send(`Erro ao cadastrar alarme: ID em uso`); return}
 
@@ -106,6 +108,8 @@ app.post(`/alarme/`, async (req, res, next) => {
 
 // Consulta todos os dados da tabela
 app.get(`/alarme/`, (req, res, next) => {
+    console.log(`GET request on /alarme`)
+
     db.all(`SELECT * FROM alarmes`, [], (err, rows) => {
         if (err) {
             res.status(500).send(`Erro ao obter dados: ${err}`);
@@ -123,6 +127,8 @@ app.get(`/alarme/`, (req, res, next) => {
 
 // Consulta um alarme específico através do ID
 app.get(`/alarme/:id`, (req, res, next) => {
+    console.log(`GET request on /alarme`)
+
     db.get(`SELECT * FROM alarmes WHERE id = ?`,
         req.params.id, (err, result) => {
             if (err) {
@@ -138,6 +144,8 @@ app.get(`/alarme/:id`, (req, res, next) => {
 
 // Atualiza alarme
 app.patch(`/alarme/:id`, async (req, res, next) => {
+    console.log(`PATCH request on /alarme`)
+
     // Valida permissao
     const authorize = await authorizeUser(req.params.id, req.body.cpf)
     if (!authorize.success) { res.status(500).send(authorize.message); return }
@@ -161,6 +169,8 @@ app.patch(`/alarme/:id`, async (req, res, next) => {
 
 // Exclui o alarme
 app.delete(`/alarme/:id`, async (req, res, next) => {
+    console.log(`DELETE request on /alarme`)
+
     // Valida permissao
     const authorize = await authorizeUser(req.params.id, req.body.cpf)
     if (!authorize.success) { res.status(500).send(authorize.message); return }
@@ -187,7 +197,7 @@ let porta = 8090;
 app.listen(porta, () => {
     console.clear()
     console.log("Alarme Service")
-    console.log(`Servidor em execução na porta: ` + porta);
+    console.log(`Servidor em execução na porta: ${porta}\n`);
 });
 
 //----------------------------------------------------------------

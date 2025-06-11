@@ -54,6 +54,8 @@ function validateAlarmAndUser({alarme, usuario, cpf}) {
 
 // Liga o alarme
 app.post('/aciona/liga/:id', async (req, res, next) => {
+    console.log(`POST request on /aciona/liga`)
+
     const cpf = req.body.cpf
     const alarme = await getAlarme(req.params.id);
     const usuario = await getUsuario(cpf)
@@ -73,6 +75,8 @@ app.post('/aciona/liga/:id', async (req, res, next) => {
 
 // Desliga o alarme
 app.post('/aciona/desliga/:id', async (req, res, next) => {
+    console.log(`POST request on /aciona/desliga`)
+
     const cpf = req.body.cpf
     const alarme = await getAlarme(req.params.id);
     const usuario = await getUsuario(cpf)
@@ -100,7 +104,7 @@ let porta = 8060;
 app.listen(porta, () => {
     console.clear()
     console.log(`Acionamento Service`)
-    console.log('Servidor em execução na porta: ' + porta);
+    console.log(`Servidor em execução na porta: ${porta}\n`);
 });
 
 

@@ -39,6 +39,8 @@ db.run(`CREATE TABLE IF NOT EXISTS logging (
 
 // Cadastra um novo registro
 app.post('/logging/', (req, res, next) => {
+    console.log(`POST request on /logging`)
+
     const horario = new Date().toLocaleString('en-GB', {
         hour: '2-digit',
         minute: '2-digit',
@@ -61,6 +63,8 @@ app.post('/logging/', (req, res, next) => {
 
 // Consulta todos os dados da tabela
 app.get('/logging/', (req, res, next) => {
+    console.log(`GET request on /logging`)
+
     db.all(`SELECT * FROM logging`, [], (err, result) => {
         if (err) {
             res.status(500).send(`Erro ao obter dados: ${err}`);
@@ -80,7 +84,7 @@ let porta = 8070;
 app.listen(porta, () => {
     console.clear()
     console.log("Logging Service")
-    console.log('Servidor em execução na porta: ' + porta);
+    console.log(`Servidor em execução na porta: ${porta}\n`);
 });
 
 

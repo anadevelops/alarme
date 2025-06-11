@@ -12,6 +12,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Envia notificação
 app.post('/notify/', async (req, res, next) => {
+    console.log(`POST request on /notify`)
+
     try {
         // Dados
         const horario = new Date().toLocaleString('en-GB', {
@@ -52,7 +54,7 @@ let porta = 8040;
 app.listen(porta, () => {
     console.clear()
     console.log("Notify Service")
-    console.log('Servidor em execução na porta: ' + porta + '\n');
+    console.log(`Servidor em execução na porta: ${porta}\n`);
 });
 
 

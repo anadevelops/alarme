@@ -12,6 +12,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Dispara o alarme
 app.post('/dispara/:id', async (req, res, next) => {
+    console.log(`POST request on /dispara`)
+
     const dadosAlarme = await getAlarme(req.params.id);
     if (!dadosAlarme) {
         res.status(500).send('ID de alarme inválido');
@@ -34,7 +36,7 @@ let porta = 8050;
 app.listen(porta, () => {
     console.clear()
     console.log("Disparo Service")
-    console.log('Servidor em execução na porta: ' + porta);
+    console.log(`Servidor em execução na porta: ${porta}\n`);
 });
 
 

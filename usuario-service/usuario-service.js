@@ -39,6 +39,8 @@ db.run(`CREATE TABLE IF NOT EXISTS usuarios
 
 // Cadastra o usuário
 app.post('/usuario/', async (req, res, next) => {
+    console.log(`POST request on /usuario`)
+
     // Valida se CPF já está em uso
     if (await getUsuario(req.body.cpf)) { res.status(500).send(`Erro ao cadastrar usuario: CPF já está cadastrado`); return }
 
@@ -55,6 +57,8 @@ app.post('/usuario/', async (req, res, next) => {
 
 // Consulta todos os dados da tabela
 app.get('/usuario/', (req, res, next) => {
+    console.log(`GET request on /usuario`)
+
     db.all(`SELECT * FROM usuarios`, [], (err, result) => {
         if (err) {
             res.status(500).send(`Erro ao obter dados: ${err}`);
@@ -66,6 +70,8 @@ app.get('/usuario/', (req, res, next) => {
 
 // Consulta um usuário específico através do CPF
 app.get('/usuario/:cpf', (req, res, next) => {
+    console.log(`GET request on /usuario`)
+    
     db.get(`SELECT * FROM usuarios WHERE cpf = ?`,
         req.params.cpf, (err, result) => {
             if (err) {
@@ -80,6 +86,8 @@ app.get('/usuario/:cpf', (req, res, next) => {
 
 // Altera cadastro do usuário
 app.patch('/usuario/:cpf', (req, res, next) => {
+    console.log(`PATCH request on /usuario`)
+
     db.run(`UPDATE usuarios SET nome = COALESCE(?, nome), telefone = COALESCE(?, telefone) WHERE cpf = ?`,
         [req.body.nome, req.body.telefone, req.params.cpf], function(err) {
             if (err) {
@@ -94,6 +102,8 @@ app.patch('/usuario/:cpf', (req, res, next) => {
 
 // Exclui o usuário
 app.delete('/usuario/:cpf', (req, res, next) => {
+    console.log(`DELETE request on /usuario`)
+
     db.run(`DELETE FROM usuarios WHERE cpf = ?`, req.params.cpf, function(err) {
         if (err) {
             res.status(500).send(`Erro ao excluir usuário: ${err}`);
@@ -115,7 +125,7 @@ let porta = 8080;
 app.listen(porta, () => {
     console.clear()
     console.log("Usuario Service")
-    console.log('Servidor em execução na porta: ' + porta);
+    console.log(`Servidor em execução na porta: ${porta}\n`);
 });
 
 
